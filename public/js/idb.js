@@ -11,7 +11,7 @@ request.onsuccess = function (event) {
     db = event.target.result;
 
     if (navigator.onLine) {
-        // uploadFinance();
+         uploadFinance();
     }
 };
 
@@ -24,3 +24,44 @@ function saveRecord(record) {
     const budgetObjectStore = transaction.objectStore('new_finance');
     budgetObjectStore.add(record);
 }
+
+function uploadFinance() {
+    const transaction = db.transaction(['new_finance'], 'readwrite');
+
+    const budgetObjectStore = transaction.objectStore('new_finance');
+
+    const getAll = budgetObjectStore.getAll();
+
+    // upon a successful .getAll() execution, run this function
+    getAll.onsuccess = function () {
+        // if there was data in indexedDb's store, let's send it to the api server
+        if (getAll.result.length > 0) {
+            fetch('/api/transaction', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(serverResponse => {
+                    if (serverResponse.message) {
+                        throw new Error(serverResponse);
+                    }
+                    // open one more transaction
+                    const transaction = db.transaction(['new_finance'], 'readwrite');
+                    // access the new_pizza object store
+                    const budgetObjectStore = transaction.objectStore('new_finance');
+                    // clear all items in your store
+                    budgetObjectStore.clear();
+
+                    alert('All saved transactions have been submitted!');
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    };
+}
+window.addEventListener('online', uploadFinance);
