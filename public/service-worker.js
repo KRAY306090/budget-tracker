@@ -1,5 +1,5 @@
 const APP_PREFIX = 'BudgetTracker-';
-const VERSION = 'version_03';
+const VERSION = 'version_04';
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const FILES_TO_CACHE = [
@@ -14,7 +14,8 @@ const FILES_TO_CACHE = [
     "./icons/icon-192x192.png",
     "./icons/icon-384x384.png",
     "./icons/icon-512x512.png",
-    "./css/styles.css"
+    "./css/styles.css",
+    "/manifest.json"
 ];
 
 self.addEventListener('install', function (e) {
@@ -60,3 +61,44 @@ self.addEventListener('fetch', function (e) {
         })
     )
 })
+
+// self.addEventListener('fetch', function(evt) {
+//     if (evt.request.url.includes('/api/')) {
+//       evt.respondWith(
+//         caches
+//           .open(CACHE_NAME)
+//           .then(cache => {
+//             return fetch(evt.request)
+//               .then(response => {
+//                 // If the response was good, clone it and store it in the cache.
+//                 if (response.status === 200) {
+//                   cache.put(evt.request.url, response.clone());
+//                 }
+  
+//                 return response;
+//               })
+//               .catch(err => {
+//                 // Network request failed, try to get it from the cache.
+//                 return cache.match(evt.request);
+//               });
+//           })
+//           .catch(err => console.log(err))
+//       );
+  
+//       return;
+//     }
+  
+//     evt.respondWith(
+//       fetch(evt.request).catch(function() {
+//         return caches.match(evt.request).then(function(response) {
+//           if (response) {
+//             return response;
+//           } else if (evt.request.headers.get('accept').includes('text/html')) {
+//             // return the cached home page for all requests for html pages
+//             return caches.match('/');
+//           }
+//         });
+//       })
+//     );
+//   });
+  
