@@ -49,11 +49,11 @@ function uploadFinance() {
                     if (serverResponse.message) {
                         throw new Error(serverResponse);
                     }
-                    // open one more transaction
+                    
                     const transaction = db.transaction(['new_finance'], 'readwrite');
-                    // access the new_pizza object store
+        
                     const budgetObjectStore = transaction.objectStore('new_finance');
-                    // clear all items in your store
+            
                     budgetObjectStore.clear();
 
                     alert('All saved transactions have been submitted!');
